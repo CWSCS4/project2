@@ -3,7 +3,7 @@ Arithmetic logic unit
 
 
 - [x] Half Adder
-- [] Full Adder
-- [] Inc16
-- [] Add16
-- [] ALU
+- [ ] Full Adder
+- [ ] Inc16
+- [ ] Add16
+- [ ] ALU
