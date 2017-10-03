@@ -28,7 +28,8 @@
 
 CHIP ALU {
     IN  
-        x[16], y[16],  // 16-bit inputs        
+        x[16], y[16],  // 16-bit inputs
+
         zx, // zero the x input?
         nx, // negate the x input?
         zy, // zero the y input?
@@ -42,5 +43,33 @@ CHIP ALU {
         ng; // 1 if (out < 0),  0 otherwise
 
     PARTS:
-   // Put you code here:
+
+    // handle zero (zx/zy)
+    // if zx, output false, if not, output x
+    Mux16(a=x, b=false, sel=zx, out=zeroedX);
+    Mux16(a=y, b=false, sel=zy, out=zeroedY);
+
+    // handle negate (nx/ny)
+    Not16(in=zeroedX, out=nottedX);
+    Mux16(a=zeroedX, b=nottedX, sel=nx, out=outputX);
+
+    Not16(in=zeroedY, out=nottedY);
+    Mux16(a=zeroedY, b=nottedY, sel=ny, out=outputY);
+
+    // handle compute (f)
+    Add16(a=outputX, b=outputY, out=computedAdd);
+    And16(a=outputX, b=outputY, out=computedAnd);
+    Mux16(a=computedAnd, b=computedAdd, sel=f, out=computed);
+
+    // handle negation (no)
+    Not16(in=computed, out=negatedComputed);
+    // out[15] to handle two's complement
+    Mux16(a=computed, b=negatedComputed, sel=no, out[0..7]=temp0to7, out[8..15]=temp8to15, out=out, out[15]=ng);
+
+    // check if out == 0 (zr)
+    Or8Way(in=temp0to7, out=firstOr8);
+    Or8Way(in=temp8to15, out=secondOr8);
+    Or(a=firstOr8, b=secondOr8, out=contains1);
+    Not(in=contains1, out=zr);
+
 }
