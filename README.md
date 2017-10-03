@@ -6,4 +6,4 @@ Arithmetic logic unit
 - [X] Full Adder
 - [X] Inc16
 - [X] Add16
-- [ ] ALU
+- [X] ALU
